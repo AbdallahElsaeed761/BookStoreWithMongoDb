@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -26,9 +27,55 @@ namespace BookStoreInMongo.Controllers
         {
             var database = client.GetDatabase("BookStoreInventory");
             var table = database.GetCollection<Book>("books");
-          //  book._id = Guid.NewGuid().ToString();
+            book.Id = Guid.NewGuid().ToString();
             table.InsertOne(book);
            // ViewBag.save = "created New Book Successfully";
+            return RedirectToAction("Index");
+        }
+        public  ActionResult Edit(string id)
+        {
+            var database = client.GetDatabase("BookStoreInventory");
+            var table = database.GetCollection<Book>("books");
+            var bookEdit = table.Find(b => b.Id == id).FirstOrDefault();
+            if (bookEdit==null)
+            {
+                return RedirectToAction("Index");
+            }
+            return View(bookEdit);
+        }
+        [HttpPost]
+        public ActionResult Edit(Book book)
+        {
+            if (string.IsNullOrEmpty(book.Id))
+            {
+                ViewBag.msg = "please provide Id";
+                return View(book);
+            }
+            var database = client.GetDatabase("BookStoreInventory");
+            var table = database.GetCollection<Book>("books");
+            var newBook= table.ReplaceOne(a => a.Id == book.Id, book);
+            return RedirectToAction("index");
+        }
+        public ActionResult Details(string id)
+        {
+            var database = client.GetDatabase("BookStoreInventory");
+            var table = database.GetCollection<Book>("books");
+            var book = table.Find(b => b.Id == id).FirstOrDefault();
+            return View(book);
+        }
+        public ActionResult Delete(string id)
+        {
+            var database = client.GetDatabase("BookStoreInventory");
+            var table = database.GetCollection<Book>("books");
+            var book = table.Find(b => b.Id == id).FirstOrDefault();
+            return View(book);
+        }
+        [HttpPost]
+        public ActionResult Delete(Book book)
+        {
+            var database = client.GetDatabase("BookStoreInventory");
+            var table = database.GetCollection<Book>("books");
+            table.DeleteOne(c => c.Id == book.Id);
             return RedirectToAction("Index");
         }
     }

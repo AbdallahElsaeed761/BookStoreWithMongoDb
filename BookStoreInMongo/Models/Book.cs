@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Web;
 using System.Xml.Serialization;
 
@@ -12,14 +13,12 @@ namespace BookStoreInMongo.Models
     {
         //[BsonRepresentation(BsonType.ObjectId)]
         //public string _id { get; set; }
-        [XmlIgnore]
-        public ObjectId _id { get; set; }
+        [BsonId]
+        [DataMember]
+        public MongoDB.Bson.ObjectId _id { get; set; }
 
-        public string MongoId
-        {
-            get { return _id.ToString(); }
-            set { _id = ObjectId.Parse(value); }
-        }
+        [DataMember]
+        public string Id { get; set; }
 
         public string Name { get; set; }
 
