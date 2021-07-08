@@ -8,10 +8,10 @@
 
 <h5>@ViewBag.save</h5>
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Add New Book</h4>
         <hr />
@@ -62,4 +62,5 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+  
 }

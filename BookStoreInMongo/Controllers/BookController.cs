@@ -20,11 +20,24 @@ namespace BookStoreInMongo.Controllers
             var books = table.Find(FilterDefinition<Book>.Empty).ToList();
             return View(books);
         }
+        //get One Book 
+        public ActionResult Details(string id)
+        {
+            var database = client.GetDatabase("BookStoreInventory");
+            var table = database.GetCollection<Book>("books");
+            var book = table.Find(b => b.Id == id).FirstOrDefault();
+            return View(book);
+        }
+        //for create New [get by Default]
         public ActionResult Create() => View();
        
         [HttpPost]
         public ActionResult Create(Book book)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(book);
+            }
             var database = client.GetDatabase("BookStoreInventory");
             var table = database.GetCollection<Book>("books");
             book.Id = Guid.NewGuid().ToString();
@@ -51,6 +64,10 @@ namespace BookStoreInMongo.Controllers
                 ViewBag.msg = "please provide Id";
                 return View(book);
             }
+            if (!ModelState.IsValid)
+            {
+                return View(book);
+            }
             var database = client.GetDatabase("BookStoreInventory");
             var table = database.GetCollection<Book>("books");
             var oldBook = table.Find(b => b.Id == book.Id).FirstOrDefault();
@@ -61,13 +78,7 @@ namespace BookStoreInMongo.Controllers
             var newBook = table.ReplaceOne(a => a.Id == book.Id, oldBook);
             return RedirectToAction("index");
         }
-        public ActionResult Details(string id)
-        {
-            var database = client.GetDatabase("BookStoreInventory");
-            var table = database.GetCollection<Book>("books");
-            var book = table.Find(b => b.Id == id).FirstOrDefault();
-            return View(book);
-        }
+      //delete One Book
         public ActionResult Delete(string id)
         {
             var database = client.GetDatabase("BookStoreInventory");
