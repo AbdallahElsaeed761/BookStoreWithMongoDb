@@ -53,7 +53,12 @@ namespace BookStoreInMongo.Controllers
             }
             var database = client.GetDatabase("BookStoreInventory");
             var table = database.GetCollection<Book>("books");
-            var newBook= table.ReplaceOne(a => a.Id == book.Id, book);
+            var oldBook = table.Find(b => b.Id == book.Id).FirstOrDefault();
+            oldBook.Name = book.Name;
+            oldBook.Price = book.Price;
+            oldBook.Category = book.Category;
+            oldBook.Author = book.Author;
+            var newBook = table.ReplaceOne(a => a.Id == book.Id, oldBook);
             return RedirectToAction("index");
         }
         public ActionResult Details(string id)
